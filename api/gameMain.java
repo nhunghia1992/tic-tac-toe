@@ -13,7 +13,7 @@ public class gameMain {
             game1.xMove(scan.nextLine());
             System.out.println();
             game1.printBoard();
-            if(game1.checkWinner().equals("X")){
+            if(game1.getWinner().equals("X")){
                 break;
             }
             if(game1.checkTie()){
@@ -23,7 +23,7 @@ public class gameMain {
             game1.oMove(scan.nextLine());
             System.out.println();
             game1.printBoard();
-            game1.checkWinner();
+            game1.getWinner();
             game1.checkTie();
         }
         game1.getResults();

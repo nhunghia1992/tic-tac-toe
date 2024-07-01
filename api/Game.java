@@ -6,6 +6,7 @@ public class Game {
     private boolean isRunning;
     private int sideLength;
     private int winCond;
+    private String winner;
 
     /**
      * creates a new Tic Tac Toe game
@@ -22,6 +23,7 @@ public class Game {
      * @param winCond
      */
     private void iniGame(int sideLength, int winCond){
+        winner = "";
         Scanner scan = new Scanner(System.in);
         while(sideLength <= 1 || sideLength >=26){
             System.out.print("Invalid board size, please enter a number between 2 and 26 for the board length: ");
@@ -47,75 +49,127 @@ public class Game {
     }
 
     /**
-     * checks the winner
-     * @return " " if game is still running, "X" or "O" depending on the winner
+     * checks vertical lines for a winner
+     * @param i
+     * @param j
+     * @param prevI
+     * @return
      */
-    public String checkWinner(){
-        int inARowCount = 1;
-        for (int i = 0; i < sideLength; i++){
-            for (int j = 0; j < sideLength - 1; j++){
-                if (board.atLoc(i, j).equals(board.atLoc(i, j+1))){
-                    inARowCount++;
-                    if (inARowCount == winCond){
-                        isRunning = false;
-                        return board.atLoc(i, j);
-                    }
+    private int checkVertical(int i, int j, int prevI){
+        if (i < 0 || i > sideLength-1){
+            return 0;
+        }
+        if (!board.atLoc(i,j).equals("X") && !board.atLoc(i,j).equals("O")){
+            return 0;
+        }
+        if (prevI != i){
+            if (board.atLoc(i, j).equals(board.atLoc(prevI, j))){
+                if (i < prevI){
+                    return checkVertical(i - 1, j, prevI) + 1;
                 }
                 else{
-                    inARowCount = 1;
+                    return checkVertical(i + 1, j, prevI) + 1;
                 }
             }
-        }
-        inARowCount = 1;
-        for (int i = 0; i < sideLength; i++){
-            for (int j = 0; j < sideLength - 1; j++){
-                if (board.atLoc(j, i).equals(board.atLoc(j + 1, i))){
-                    inARowCount++;
-                    if (inARowCount == winCond){
-                        isRunning = false;
-                        return board.atLoc(i, j);
-                    }
-                }
-                else{
-                    inARowCount = 1;
-                }
+            else{
+                return 0;
             }
-        }
-        for (int i = 0; i <= sideLength - winCond; i++){
-            for (int j = 0; j <= sideLength - winCond; j++){
-                for (int k = 1; k < winCond; k++){
-                    if (board.atLoc(i + k -1,j + k -1).equals(board.atLoc(i+k,j+k))){
-                        inARowCount++;
-                        if (inARowCount == winCond){
-                            isRunning = false;
-                            return board.atLoc(i, j);
-                        }
-                    }
-                    else{
-                        inARowCount = 1;
-                    }
-                }
-            }
-        }
-        for (int i = winCond - 1; i < sideLength; i++){
-            for (int j = 0; j <= sideLength - winCond; j++){
-                for (int k = 1; k < winCond; k++){
-                    if (board.atLoc(i-k+1,j+k-1).equals(board.atLoc(i-k,j+k))){
-                        inARowCount++;
-                        if (inARowCount == winCond){
-                            isRunning = false;
-                            return board.atLoc(i, j);
-                        }
-                    }
-                    else{
-                        inARowCount = 1;
-                    }
-                }
-            }
-        }
-        return " ";
+        }   
+        return checkVertical(i + 1, j, i) + checkVertical( i - 1, j, i) + 1;
     }
 
+    private int checkHorizontal(int i, int j, int prevJ){
+        if (j < 0 || j > sideLength-1){
+            return 0;
+        }
+        else if (!board.atLoc(i,j).equals("X") && !board.atLoc(i,j).equals("O")){
+            return 0;
+        }
+        if (prevJ != j){
+            if (board.atLoc(i, j).equals(board.atLoc(i, prevJ))){
+                if (j < prevJ){
+                    return checkHorizontal(i, j - 1, prevJ) + 1;
+                }
+                else{
+                    return checkHorizontal(i, j + 1, prevJ) + 1;
+                }
+            }
+            else{
+                return 0;
+            }
+        }   
+        return checkHorizontal(i, j+1, j) + checkHorizontal(i, j-1, j) + 1;
+    }
+
+    private int checkDiagDown(int i, int j, int prevI, int prevJ){
+        if (i < 0 || i > sideLength-1 || j < 0 || j > sideLength-1){
+            return 0;
+        }
+        else if (!board.atLoc(i,j).equals("X") && !board.atLoc(i,j).equals("O")){
+            return 0;
+        }
+        if (prevI != i && prevJ != j){
+            if (board.atLoc(i, j).equals(board.atLoc(prevI, prevJ))){
+                if (i < prevI && j < prevJ){
+                    return checkDiagDown(i - 1, j - 1, prevI, prevJ) + 1;
+                }
+                else{
+                    return checkDiagDown(i + 1, j + 1, prevI, prevJ) + 1;
+                }
+            }
+            else{
+                return 0;
+            }
+        }   
+        return checkDiagDown(i + 1, j + 1, i, j) + checkDiagDown( i - 1, j - 1, i, j) + 1;
+    }
+
+    private int checkDiagUp(int i, int j, int prevI, int prevJ){
+        if (i < 0 || i > sideLength-1 || j < 0 || j > sideLength-1){
+            return 0;
+        }
+        else if (!board.atLoc(i,j).equals("X") && !board.atLoc(i,j).equals("O")){
+            return 0;
+        }
+        if (prevI != i && prevJ != j){
+            if (board.atLoc(i, j).equals(board.atLoc(prevI, prevJ))){
+                if (i < prevI && j > prevJ){
+                    return checkDiagUp(i - 1, j + 1, prevI, prevJ) + 1;
+                }
+                else if (i > prevI && j < prevJ){
+                    return checkDiagUp(i + 1, j - 1, prevI, prevJ) + 1;
+                }
+            }
+            else{
+                return 0;
+            }
+        }   
+        return checkDiagUp(i - 1, j + 1, i, j) + checkDiagUp( i + 1, j - 1, i, j) + 1;
+    }
+
+    /**
+     * called after player move
+     * @return the winner if there is one
+     */
+    private void checkWinner(int i, int j){
+        System.out.println(checkVertical(i, j, i));
+        if (checkVertical(i, j, i) >= winCond){
+            isRunning = false;
+            winner = board.atLoc(i, j);
+        }
+        if (checkHorizontal(i, j, j) >= winCond){
+            isRunning = false;
+            winner = board.atLoc(i, j);
+        }
+        if (checkDiagDown(i, j, i, j) >= winCond){
+            isRunning = false;
+            winner = board.atLoc(i, j);
+        }
+        if (checkDiagUp(i, j, i, j) >= winCond){
+            isRunning = false;
+            winner = board.atLoc(i, j);
+        }
+    }
     /**
      * prints the result of the game
      */
@@ -124,10 +178,10 @@ public class Game {
             if (checkTie() == true){
                 System.out.println("Tie!");
             }
-            else if (checkWinner().equals("X")){
+            else if (winner.equals("X")){
                 System.out.println("X wins");
             }
-            else if (checkWinner().equals("O")){
+            else if (winner.equals("O")){
                 System.out.println("O wins");
             }
         }
@@ -214,6 +268,10 @@ public class Game {
         return newLoc;
     }
 
+    public String getWinner(){
+        return winner;
+    }
+
     /**
      * helper method for player moves
      * @param player
@@ -224,6 +282,7 @@ public class Game {
             for (int j = 0; j < sideLength; j++){
                 if (board.atLoc(i,j).equals(loc)){
                     board.setLoc(player, i, j);
+                    checkWinner(i , j);
                 }
             }
         }
