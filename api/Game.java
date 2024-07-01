@@ -152,7 +152,6 @@ public class Game {
      * @return the winner if there is one
      */
     private void checkWinner(int i, int j){
-        System.out.println(checkVertical(i, j, i));
         if (checkVertical(i, j, i) >= winCond){
             isRunning = false;
             winner = board.atLoc(i, j);
@@ -277,7 +276,7 @@ public class Game {
      * @param player
      * @param loc
      */
-    private void playerMove(String player, String loc){
+    public void playerMove(String player, String loc){
         for (int i = 0; i < sideLength; i++){
             for (int j = 0; j < sideLength; j++){
                 if (board.atLoc(i,j).equals(loc)){
