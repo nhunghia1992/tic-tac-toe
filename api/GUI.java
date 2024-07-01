@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 
 public class GUI implements ActionListener{
@@ -25,6 +26,24 @@ public class GUI implements ActionListener{
         JLabel endGame = new JLabel();
         JLabel label = new JLabel("Player " + player + "'s' turn");
         JPanel containerPanel = new JPanel();
+        JButton resetButton = new JButton("Reset");
+        resetButton.setVisible(false);
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                game.reset();
+                resetButton.setVisible(false);
+                for (Component comp : buttonPanel.getComponents()) {
+                    if (comp instanceof JButton) {
+                        ((JButton) comp).setText("");
+                    }
+                }
+                endGame.setText("");
+                player = "X";
+            }
+        });
+
+        containerPanel.add(resetButton, BorderLayout.SOUTH);
+
         GridLayout grid = new GridLayout(length,length);
         buttonPanel.setLayout(grid);
         for (int i = 0; i < length; i++){
@@ -44,6 +63,7 @@ public class GUI implements ActionListener{
                         if (game.gameRunning() == false){
                             endGame.setText("Player " + game.getWinner() + " wins");
                             containerPanel.add(endGame, BorderLayout.NORTH);
+                            resetButton.setVisible(true);
                             return;
                         }
                         if (player.equals("X")){

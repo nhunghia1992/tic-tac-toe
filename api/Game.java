@@ -209,62 +209,10 @@ public class Game {
         return true;
     }
 
-    /**
-     * player X's move
-     */
-    public void xMove(String loc){
-        if (isRunning){
-            while (checkValidMove(loc) == false){
-                System.out.println("Invalid move");
-                loc = getValidMove();
-            }
-            playerMove("X", loc);
-        }
-    }
-
-    /**
-     * player O's move
-     * @param loc
-     */
-    public void oMove(String loc){
-        if (isRunning){
-            while (checkValidMove(loc) == false){
-                System.out.println("Invalid move");
-                loc = getValidMove();
-            }
-            playerMove("O", loc);
-        }
-    }
-
-    /**
-     * checks if the player move is valid
-     * @param loc
-     * @return
-     */
-    private boolean checkValidMove(String loc){
-        if (loc.equals("X") || loc.equals("O")){
-            return false;
-        }
-        for (String[] a : board.getBoard()){
-            for (String b : a){
-                if (loc.equals(b)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
-    /**
-     * helper method to prompt the user for a valid move
-     */
-    private static String getValidMove(){
-        Scanner scan = new Scanner(System.in);
-        System.out.print("Please enter a valid move: ");
-        String newLoc = scan.nextLine();
-        System.out.println();
-        return newLoc;
+    public void reset(){
+        board = new Board(sideLength, sideLength);
+        isRunning = true;
+        winner = "";
     }
 
     public String getWinner(){
