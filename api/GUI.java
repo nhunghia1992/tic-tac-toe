@@ -46,6 +46,9 @@ public class GUI implements ActionListener{
                 }
                 endGame.setText("");
                 player = "X";
+                label.setText("Player " + player + "'s' turn");
+                enableAllButtons(buttons);
+                removeAllHighlights(buttonPanel);
             }
         });
 
@@ -258,6 +261,21 @@ public class GUI implements ActionListener{
     private void disableAllButtons(ArrayList<JButton> buttons) {
         for (JButton button : buttons) {
             button.setEnabled(false);
+        }
+    }
+
+    private void enableAllButtons(ArrayList<JButton> buttons) {
+        for (JButton button : buttons) {
+            button.setEnabled(true);
+        }
+    }
+
+    private void removeAllHighlights(JPanel buttonPanel){
+        for (JButton button : buttons){
+            if (button.getBackground().equals(Color.red)){
+                button.setBackground(new JButton().getBackground());
+                button.setBorder(new JButton().getBorder());
+            }
         }
     }
 }
