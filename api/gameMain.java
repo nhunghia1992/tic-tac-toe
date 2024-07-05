@@ -1,11 +1,8 @@
 package api;
 import java.util.Scanner;
-import java.util.InputMismatchException;
-
 public class gameMain {
 
     public static void runGame(int boardLength, int winCond){
-        Scanner scan = new Scanner(System.in);
         Game game1 = new Game(boardLength, winCond);
         new GUI(boardLength,game1);
     }

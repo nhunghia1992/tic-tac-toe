@@ -1,5 +1,11 @@
 package api;
+import java.awt.Button;
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Scanner;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 
 public class Game {
     private Board board;
@@ -7,6 +13,7 @@ public class Game {
     private int sideLength;
     private int winCond;
     private String winner;
+    private ArrayList<String> winDirection = new ArrayList<String>();
 
     /**
      * creates a new Tic Tac Toe game
@@ -39,13 +46,6 @@ public class Game {
         this.winCond = winCond;
         board = new Board(this.sideLength, this.sideLength);
         isRunning = true;
-    }
-
-    /**
-     * prints the game board
-     */
-    public void printBoard(){
-        board.printBoard();
     }
 
     /**
@@ -155,34 +155,22 @@ public class Game {
         if (checkVertical(i, j, i) >= winCond){
             isRunning = false;
             winner = board.atLoc(i, j);
+            winDirection.add("vertical");
         }
         if (checkHorizontal(i, j, j) >= winCond){
             isRunning = false;
             winner = board.atLoc(i, j);
+            winDirection.add("horizontal");
         }
         if (checkDiagDown(i, j, i, j) >= winCond){
             isRunning = false;
             winner = board.atLoc(i, j);
+            winDirection.add("diagDown");
         }
         if (checkDiagUp(i, j, i, j) >= winCond){
             isRunning = false;
             winner = board.atLoc(i, j);
-        }
-    }
-    /**
-     * prints the result of the game
-     */
-    public void getResults(){
-        if(isRunning == false){
-            if (checkTie() == true){
-                System.out.println("Tie!");
-            }
-            else if (winner.equals("X")){
-                System.out.println("X wins");
-            }
-            else if (winner.equals("O")){
-                System.out.println("O wins");
-            }
+            winDirection.add("diagUp");
         }
     }
 
@@ -235,4 +223,12 @@ public class Game {
         }
     }
 
+    public ArrayList<String> getWinDirect(){
+        return winDirection;
+    }
+
+    public int getWinCond(){
+        return winCond;
+    }
+    
 }
