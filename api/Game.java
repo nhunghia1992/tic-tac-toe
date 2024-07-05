@@ -1,12 +1,10 @@
 package api;
-import java.awt.Button;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-
+/**
+ * Game class for Tic Tac Toe
+ */
 public class Game {
     private Board board;
     private boolean isRunning;

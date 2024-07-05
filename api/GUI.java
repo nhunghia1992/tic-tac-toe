@@ -107,7 +107,7 @@ public class GUI implements ActionListener{
     }
 
     private void changeColor(JButton button){
-        button.setBackground(Color.red);
+        button.setBackground(Color.yellow);
         button.setOpaque(true);
         button.setBorder(BorderFactory.createEmptyBorder());
     }
@@ -272,10 +272,11 @@ public class GUI implements ActionListener{
 
     private void removeAllHighlights(JPanel buttonPanel){
         for (JButton button : buttons){
-            if (button.getBackground().equals(Color.red)){
+            if (button.getBackground().equals(Color.yellow)){
                 button.setBackground(new JButton().getBackground());
                 button.setBorder(new JButton().getBorder());
             }
         }
     }
+
 }
