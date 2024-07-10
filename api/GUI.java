@@ -4,7 +4,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.Timer;
@@ -42,7 +41,7 @@ public class GUI implements ActionListener{
     public GUI(int length, Game game){
         JFrame frame = new JFrame("Tic Tac Toe");
         this.length = length;
-        player1Timer = new Timer(10, new ActionListener() {
+        player1Timer = new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             long now = System.currentTimeMillis();
@@ -53,7 +52,7 @@ public class GUI implements ActionListener{
             }
             }
         });
-        player2Timer = new Timer(10, new ActionListener() {
+        player2Timer = new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             long now = System.currentTimeMillis();

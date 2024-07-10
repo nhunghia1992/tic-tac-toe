@@ -15,6 +15,7 @@ public class gameMain {
         System.out.print("Win condition: ");
         int winCond = scan.nextInt();
         runGame(boardLength, winCond);
+        scan.close();
 
         
     }
