@@ -4,7 +4,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +17,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 
 public class GUI implements ActionListener{
     private String player = "X";
@@ -22,16 +26,88 @@ public class GUI implements ActionListener{
     private int winCond;
     private int length;
     private ArrayList<JButton> buttons = new ArrayList<JButton>();
+    private JTextField nameField;
+    private String player1 = "";
+    private String player2 = "";
+    private JLabel label = new JLabel("");
+    private Timer player1Timer;
+    private Timer player2Timer;
+    private JLabel p1timeLabel;
+    private JLabel p2timeLabel;
+    private long p1Time;
+    private long p2Time;
+    private long p1clockTime;
+    private long p2clockTime;
 
     public GUI(int length, Game game){
+        JFrame frame = new JFrame("Tic Tac Toe");
         this.length = length;
+        player1Timer = new Timer(10, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            long now = System.currentTimeMillis();
+            p1clockTime = now - p1Time;
+            if (p1clockTime >= 0) {
+                double seconds = p1clockTime / 1000.0;
+                p1timeLabel.setText(String.format(player1 + "'s time: %.1f" + "   ", seconds));
+            }
+            }
+        });
+        player2Timer = new Timer(10, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            long now = System.currentTimeMillis();
+            p2clockTime = now - p2Time;
+            if (p2clockTime >= 0) {
+                double seconds = p2clockTime / 1000.0;
+                p2timeLabel.setText(String.format(player2 + "'s time: %.1f", seconds));
+            }
+            }
+        });
+        nameField = new JTextField();
+        nameField.setPreferredSize(new Dimension(200, 24));
+        JLabel nameLabel = new JLabel("Player 1 name: ");
+        JPanel namePanel = new JPanel(new BorderLayout());
+        namePanel.add(nameLabel, BorderLayout.WEST);
+        namePanel.add(nameField, BorderLayout.CENTER);
+        nameField.addActionListener(new ActionListener() {
+            //gets the name of the players and sets the label to the current player
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (player1.equals("")){
+                    player1 = nameField.getText();
+                    nameField.setText("");
+                    label.setText(player1 + "'s"+ " turn");
+                    nameLabel.setText("Player 2 name: ");
+                } else if(player2.equals("")) {
+                    player2 = nameField.getText();
+                    nameField.setText("");
+                    nameField.removeActionListener(this);
+                    nameField.setVisible(false);
+                    nameLabel.setVisible(false);
+                    enableAllButtons(buttons);
+                    JPanel labelPanel = new JPanel();
+                    labelPanel.setLayout(new FlowLayout());
+                    p1Time = System.currentTimeMillis();
+                    p2Time = System.currentTimeMillis();
+                    p1timeLabel = new JLabel(player1 + "'s time: 0.0", JLabel.CENTER);
+                    p2timeLabel = new JLabel(player2 + "'s time: 0.0", JLabel.CENTER);
+                    labelPanel.add(p1timeLabel);
+                    labelPanel.add(p2timeLabel);
+                    frame.add(labelPanel, BorderLayout.SOUTH);
+                    p2timeLabel.setVisible(true);
+                    p1timeLabel.setVisible(true);
+                    player1Timer.start();
+                }
+            }
+        });
+        
+        //Reset button
         winDirect = game.getWinDirect();
         winCond = game.getWinCond();
-        JFrame frame = new JFrame("Tic Tac Toe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel buttonPanel = new JPanel();
         JLabel endGame = new JLabel();
-        JLabel label = new JLabel("Player " + player + "'s' turn");
         JPanel containerPanel = new JPanel();
         JButton resetButton = new JButton("Reset");
         resetButton.setVisible(false);
@@ -45,15 +121,21 @@ public class GUI implements ActionListener{
                     }
                 }
                 endGame.setText("");
-                player = "X";
-                label.setText("Player " + player + "'s' turn");
+                label.setText(player1 + "'s turn(X)");
                 enableAllButtons(buttons);
                 removeAllHighlights(buttonPanel);
+                p1clockTime = 0;
+                p2clockTime = 0;
+                p1Time = System.currentTimeMillis();
+                p2Time = System.currentTimeMillis();
+                p2timeLabel.setText(String.format(player2 + "'s time: %.1f", 0.0));
+                player1Timer.start();
             }
         });
-
+        frame.add(namePanel, BorderLayout.NORTH);
         containerPanel.add(resetButton, BorderLayout.SOUTH);
 
+        //makes the buttons for the game
         GridLayout grid = new GridLayout(length,length);
         buttonPanel.setLayout(grid);
         for (int i = 0; i < length; i++){
@@ -71,7 +153,15 @@ public class GUI implements ActionListener{
                             game.playerMove(player, button.getName());
                         }
                         if (game.gameRunning() == false){
-                            endGame.setText("Player " + game.getWinner() + " wins");
+                            player1Timer.stop();
+                            player2Timer.stop();
+                            if (game.getWinner().equals("X")){
+                                endGame.setText(player1 + "(X) wins");
+                            } else if (game.getWinner().equals("O")){
+                                endGame.setText(player2 + "(O) wins");
+                            } else {
+                                endGame.setText("Tie");
+                            }
                             containerPanel.add(endGame, BorderLayout.NORTH);
                             resetButton.setVisible(true);
                             GUI.this.highlightWinner(button, buttonPanel, player, winDirect);
@@ -80,16 +170,24 @@ public class GUI implements ActionListener{
                         }
                         if (player.equals("X")){
                             player = "O";
+                            label.setText(player2 + "'s turn(O)");
+                            player1Timer.stop();
+                            p2Time = System.currentTimeMillis() - p2clockTime;
+                            player2Timer.start();
                         } else {
                             player = "X";
+                            label.setText(player1 + "'s turn(X)");
+                            player2Timer.stop();
+                            p1Time = System.currentTimeMillis() - p1clockTime;
+                            player1Timer.start();
                         }
-                        label.setText("Player " + player + "'s' turn");
                     }
                 });
                 buttonPanel.add(button);
                 buttons.add(button);
             }
         }
+        disableAllButtons(buttons);
         containerPanel.add(label, BorderLayout.NORTH);
         containerPanel.add(buttonPanel);
         containerPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
@@ -98,12 +196,13 @@ public class GUI implements ActionListener{
         frame.getContentPane().add(containerPanel);
         frame.pack();
         frame.setVisible(true);
+
+
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //TODO
     }
 
     private void changeColor(JButton button){
