@@ -12,6 +12,7 @@ public class Game {
     private int winCond;
     private String winner;
     private ArrayList<String> winDirection = new ArrayList<String>();
+    private int sidelength;
 
     /**
      * creates a new Tic Tac Toe game
@@ -28,6 +29,7 @@ public class Game {
      * @param winCond
      */
     private void iniGame(int sideLength, int winCond){
+        this.sideLength = sideLength;
         winner = "";
         Scanner scan = new Scanner(System.in);
         while(sideLength <= 1 || sideLength >=26){
@@ -44,6 +46,7 @@ public class Game {
         this.winCond = winCond;
         board = new Board(this.sideLength, this.sideLength);
         isRunning = true;
+        scan.close();
     }
 
     /**
@@ -229,4 +232,7 @@ public class Game {
         return winCond;
     }
     
+    public int getSideLength(){
+        return sideLength;
+    }
 }
